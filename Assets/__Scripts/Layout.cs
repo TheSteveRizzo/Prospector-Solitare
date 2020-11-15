@@ -1,155 +1,173 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections; 
+
+using System.Collections.Generic; 
+
+using UnityEngine; 
+
+  
 
 // The SlotDef class is not a subclass of MonoBehaviour, so it doesn't need 
+
 //   a separate C# file. 
 
 [System.Serializable] // This makes SlotDefs visible in the Unity Inspector pane 
-public class SlotDef
-{
-    public float x;
 
-    public float y;
+public class SlotDef { 
 
-    public bool faceUp = false;
+    public float         x; 
 
-    public string layerName = "Default";
+    public float         y; 
 
-    public int layerID = 0;
+    public bool          faceUp = false; 
 
-    public int id;
+    public string        layerName = "Default"; 
 
-    public List<int> hiddenBy = new List<int>();
+    public int           layerID = 0; 
 
-    public string type = "slot";
+    public int           id; 
 
-    public Vector2 stagger;
-}
+    public List<int>     hiddenBy = new List<int>(); 
 
+    public string        type = "slot"; 
 
-public class Layout : MonoBehaviour
-{
-    public PT_XMLReader xmlr; // Just like Deck, this has a PT_XMLReader 
+    public Vector2       stagger; 
 
-    public PT_XMLHashtable xml; // This variable is for faster xml access 
+} 
 
-    public Vector2 multiplier; // The offset of the tableau's center 
+  
+
+public class Layout : MonoBehaviour { 
+
+    public PT_XMLReader      xmlr; // Just like Deck, this has a PT_XMLReader 
+
+    public PT_XMLHashtable   xml; // This variable is for faster xml access 
+
+    public Vector2           multiplier; // The offset of the tableau's center 
 
     // SlotDef references 
 
-    public List<SlotDef> slotDefs; // All the SlotDefs for Row0-Row3 
+    public List<SlotDef>    slotDefs; // All the SlotDefs for Row0-Row3 
 
-    public SlotDef drawPile;
+    public SlotDef          drawPile; 
 
-    public SlotDef discardPile;
+    public SlotDef          discardPile; 
 
     // This holds all of the possible names for the layers set by layerID 
 
-    public string[] sortingLayerNames = new string[]
-    {
-        "Row0", "Row1",
+    public string[]         sortingLayerNames = new string[] { "Row0", "Row1", 
 
-        "Row2", "Row3", "Discard", "Draw"
-    };
+                            "Row2", "Row3", "Discard", "Draw" }; 
 
+  
 
-    // This function is called to read in the LayoutXML.xml file 
+  // This function is called to read in the LayoutXML.xml file 
 
-    public void ReadLayout(string xmlText)
-    {
-        xmlr = new PT_XMLReader();
+  public void ReadLayout(string xmlText) { 
 
-        xmlr.Parse(xmlText); // The XML is parsed 
+      xmlr = new PT_XMLReader(); 
 
-        xml = xmlr.xml["xml"][0]; // And xml is set as a shortcut to the XML 
+      xmlr.Parse(xmlText);      // The XML is parsed 
 
+      xml = xmlr.xml["xml"][0]; // And xml is set as a shortcut to the XML 
 
-        // Read in the multiplier, which sets card spacing 
+  
 
-        multiplier.x = float.Parse(xml["multiplier"][0].att("x"));
+      // Read in the multiplier, which sets card spacing 
 
-        multiplier.y = float.Parse(xml["multiplier"][0].att("y"));
+      multiplier.x = float.Parse(xml["multiplier"][0].att("x")); 
 
+      multiplier.y = float.Parse(xml["multiplier"][0].att("y")); 
 
-        // Read in the slots 
+  
 
-        SlotDef tSD;
+      // Read in the slots 
 
-        // slotsX is used as a shortcut to all the <slot>s 
+     SlotDef tSD; 
 
-        PT_XMLHashList slotsX = xml["slot"];
+      // slotsX is used as a shortcut to all the <slot>s 
 
+      PT_XMLHashList slotsX = xml["slot"]; 
 
-        for (int i = 0; i < slotsX.Count; i++)
-        {
-            tSD = new SlotDef(); // Create a new SlotDef instance 
+  
 
-            if (slotsX[i].HasAtt("type"))
-            {
-                // If this <slot> has a type attribute parse it 
+      for (int i=0; i<slotsX.Count; i++) { 
 
-                tSD.type = slotsX[i].att("type");
-            }
-            else
-            {
-                // If not, set its type to "slot"; it's a card in the rows 
+          tSD = new SlotDef(); // Create a new SlotDef instance 
 
-                tSD.type = "slot";
-            }
+          if (slotsX[i].HasAtt("type")) { 
 
-            // Various attributes are parsed into numerical values 
+                // If this <slot> has a type attribute parse it 
 
-            tSD.x = float.Parse(slotsX[i].att("x"));
+                tSD.type = slotsX[i].att("type"); 
 
-            tSD.y = float.Parse(slotsX[i].att("y"));
+          } else { 
 
-            tSD.layerID = int.Parse(slotsX[i].att("layer"));
+              // If not, set its type to "slot"; it's a card in the rows 
 
-            // This converts the number of the layerID into a text layerName     
+            tSD.type = "slot"; 
 
-            tSD.layerName = sortingLayerNames[tSD.layerID]; // a 
+        } 
 
+         // Various attributes are parsed into numerical values 
 
-            switch (tSD.type)
-            {
-                // pull additional attributes based on the type of this <slot> 
+        tSD.x = float.Parse( slotsX[i].att("x") ); 
 
-                case "slot":
+        tSD.y = float.Parse( slotsX[i].att("y") ); 
 
-                    tSD.faceUp = (slotsX[i].att("faceup") == "1");
+        tSD.layerID = int.Parse( slotsX[i].att("layer") ); 
 
-                    tSD.id = int.Parse(slotsX[i].att("id"));
+          // This converts the number of the layerID into a text layerName     
 
-                    if (slotsX[i].HasAtt("hiddenby"))
-                    {
-                        string[] hiding = slotsX[i].att("hiddenby").Split(',');
+        tSD.layerName = sortingLayerNames[ tSD.layerID ];              // a 
 
-                        foreach (string s in hiding)
-                        {
-                            tSD.hiddenBy.Add(int.Parse(s));
-                        }
-                    }
+  
 
-                    slotDefs.Add(tSD);
+      switch (tSD.type) { 
 
-                    break;
+          // pull additional attributes based on the type of this <slot> 
 
+          case "slot": 
 
-                case "drawpile":
+              tSD.faceUp = (slotsX[i].att("faceup") == "1"); 
 
-                    tSD.stagger.x = float.Parse(slotsX[i].att("xstagger"));
+              tSD.id = int.Parse( slotsX[i].att("id") ); 
 
-                    drawPile = tSD;
+              if (slotsX[i].HasAtt("hiddenby")) { 
 
-                    break;
+                  string[] hiding = slotsX[i].att("hiddenby").Split(','); 
 
-                case "discardpile":
+                  foreach( string s in hiding ) { 
 
-                    discardPile = tSD;
+                      tSD.hiddenBy.Add ( int.Parse(s) ); 
 
-                    break;
-            }
-        }
-    }
-}
+                } 
+
+            } 
+
+            slotDefs.Add(tSD); 
+
+            break; 
+
+  
+
+          case "drawpile": 
+
+              tSD.stagger.x = float.Parse( slotsX[i].att("xstagger") ); 
+
+              drawPile = tSD; 
+
+              break; 
+
+          case "discardpile": 
+
+              discardPile = tSD; 
+
+              break; 
+
+        } 
+
+      } 
+
+    } 
+
+} 
