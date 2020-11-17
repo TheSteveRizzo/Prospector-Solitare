@@ -162,20 +162,12 @@ public class ScoreManager : MonoBehaviour
                 break;
         }
     }
+    
+    static public int CHAIN { get { return S.chain; } }             // e 
+
+    static public int SCORE { get { return S.score; } } 
+
+    static public int SCORE_RUN { get { return S.scoreRun; } } 
 
 
-    static public int CHAIN
-    {
-        get { return S.chain; }
-    } // e 
-
-    static public int SCORE
-    {
-        get { return S.score; }
-    }
-
-    static public int SCORE_RUN
-    {
-        get { return S.scoreRun; }
-    }
 }
