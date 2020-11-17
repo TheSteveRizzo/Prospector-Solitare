@@ -9,10 +9,8 @@ using UnityEngine.UI;
 public class Scoreboard : MonoBehaviour
 {
     public static Scoreboard S; // The singleton for Scoreboard 
-
-
-    [Header("Set in Inspector")] public GameObject prefabFloatingScore;
-
+    public static GameObject report;
+    public GameObject prefabFloatingScore;
 
     [Header("Set Dynamically")] [SerializeField]
     private int _score = 0;
@@ -84,18 +82,11 @@ public class Scoreboard : MonoBehaviour
 
     public FloatingScore CreateFloatingScore(int amt, List<Vector2> pts)
     {
-        GameObject go = Instantiate<GameObject>(prefabFloatingScore);
-
-        go.transform.SetParent(canvasTrans);
-
-        FloatingScore fs = go.GetComponent<FloatingScore>();
-
+        GameObject scoreFloater = Instantiate<GameObject>(prefabFloatingScore, canvasTrans, true);
+        FloatingScore fs = scoreFloater.GetComponent<FloatingScore>();
         fs.score = amt;
-
-        fs.reportFinishTo = this.gameObject; // Set fs to call back to this 
-
+        fs.reportFinishTo = Scoreboard.report; // Set fs to call back to this 
         fs.Init(pts);
-
         return (fs);
     }
 }

@@ -113,6 +113,15 @@ public class ScoreManager : MonoBehaviour
                 chain++; // increase the score chain 
 
                 scoreRun += chain; // add score for this card to run 
+                
+                if (HIGH_SCORE <= score)
+                {
+                    print("You just beat the high score! High score: " + score);
+
+                    HIGH_SCORE = score;
+
+                    PlayerPrefs.SetInt("ProspectorHighScore", score);
+                }
 
                 break;
         }
