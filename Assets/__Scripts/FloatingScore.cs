@@ -73,7 +73,7 @@ public class FloatingScore : MonoBehaviour
 
     // The GameObject that will receive the SendMessage when this is done moving 
 
-    public GameObject reportFinishTo = null;
+    public Scoreboard reportFinishTo = null;
 
 
 

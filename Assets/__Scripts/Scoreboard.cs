@@ -10,8 +10,8 @@ public class Scoreboard : MonoBehaviour
 {
     public static Scoreboard S; // The singleton for Scoreboard 
     public static GameObject report;
-    public GameObject prefabFloatingScore;
-
+    public GameObject prefabFloatingScore, scoreFloater;
+   
     [Header("Set Dynamically")] [SerializeField]
     private int _score = 0;
 
@@ -82,10 +82,10 @@ public class Scoreboard : MonoBehaviour
 
     public FloatingScore CreateFloatingScore(int amt, List<Vector2> pts)
     {
-        GameObject scoreFloater = Instantiate<GameObject>(prefabFloatingScore, canvasTrans, true);
+        scoreFloater = Instantiate<GameObject>(prefabFloatingScore, canvasTrans, true);
         FloatingScore fs = scoreFloater.GetComponent<FloatingScore>();
         fs.score = amt;
-        fs.reportFinishTo = Scoreboard.report; // Set fs to call back to this 
+        fs.reportFinishTo = this; // Set fs to call back to this 
         fs.Init(pts);
         return (fs);
     }
