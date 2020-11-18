@@ -265,8 +265,25 @@ public class Deck : MonoBehaviour
 
         card.def = GetCardDefinitionByRank(card.rank);
         AddDecorators(card);
-        AddBack(card);
 
+        double goldProbability = 0.1;
+        // ADD CHANCES HERE TO MAKING CARD "GOLD"
+        System.Random rand = new System.Random();
+        SpriteRenderer spriteRenderer;
+        if (rand.NextDouble() < goldProbability) {
+            // 10% CHANCE OF SPAWNING GOLD
+            print("SPAWNED GOLD CARD!");
+            spriteRenderer = card.GetComponent<SpriteRenderer>();
+            spriteRenderer.color = Color.yellow;
+            cgo.tag = "GOLD";
+            AddGoldBack(card);
+        }
+        else
+        {
+            // SPAWN REGULAR
+            AddBack(card);
+        }
+        
         return card;
     }
 
@@ -367,6 +384,37 @@ public class Deck : MonoBehaviour
 
         card.faceUp = startFaceUp; // Use the property faceUp of Card 
 
+    }
+
+    private void AddGoldBack(Card card)
+    {
+        // Add GOLD Card Back 
+
+        // The Gold_Card_Back will be able to cover everything else on the Card 
+
+        _tGO = Instantiate( prefabSprite ) as GameObject; 
+
+        _tSR = _tGO.GetComponent<SpriteRenderer>(); 
+
+        _tSR.sprite = cardBackGold; 
+
+        _tGO.transform.SetParent( card.transform ); 
+
+        _tGO.transform.localPosition = Vector3.zero; 
+
+        // This is a higher sortingOrder than anything else 
+
+        _tSR.sortingOrder = 2; 
+
+        _tGO.name = "back"; 
+
+        card.back = _tGO; 
+
+    
+
+        // Default to face-up 
+
+        card.faceUp = startFaceUp; // Use the property faceUp of Card 
     }
     
     // Shuffle the Cards in Deck.cards 

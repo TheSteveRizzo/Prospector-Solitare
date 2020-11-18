@@ -8,7 +8,7 @@ public enum ScoreEvent
 {
 	draw,
 	mine,
-	mineGold,
+	mine_GOLD,
 	gameWin,
 	gameLoss
 }
@@ -230,7 +230,14 @@ public class Prospector : MonoBehaviour
 				tableau.Remove(cd); // Remove it from the tableau List
 				MoveToTarget(cd);   // Make it the target card
 				SetTableauFaces();  // Update tableau card face-ups
-				ScoreManager(ScoreEvent.mine);
+				if (!cd.gameObject.tag.Contains("GOLD"))
+				{
+					ScoreManager(ScoreEvent.mine);
+				}
+				else
+				{
+					ScoreManager(ScoreEvent.mine_GOLD);
+				}
 				break;
 		}
 		// Check to see whether the game is over or not
@@ -431,6 +438,21 @@ public class Prospector : MonoBehaviour
 				FloatingScore fs;
 				// Move it from the mousePosition to fsPosRun
 				Vector3 p0 = Input.mousePosition;
+				p0.x /= Screen.width;
+				p0.y /= Screen.height;
+				fsPts = new List<Vector2>();
+				fsPts.Add(p0);
+				fsPts.Add(fsPosMid);
+				fsPts.Add(fsPosRun);
+				fs = Scoreboard.S.CreateFloatingScore(chain, fsPts);
+				fs.fontSizes = new List<float>(new float[] { 4, 50, 28 });
+				break;
+			
+			case ScoreEvent.mine_GOLD: // Remove a mine card
+				chain++;           // increase the score chain
+				scoreRun = scoreRun * 2; // double the score run [GOLD]
+				scoreRun += chain; // add score for this card to run
+				p0 = Input.mousePosition;
 				p0.x /= Screen.width;
 				p0.y /= Screen.height;
 				fsPts = new List<Vector2>();
